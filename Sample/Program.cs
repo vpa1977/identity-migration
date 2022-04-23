@@ -53,6 +53,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+// + Allow cors since it is a sample without reverse proxy
+app.UseCors(builder =>
+{
+    builder.AllowAnyOrigin();
+});
+// 
+
 app.UseAuthentication();
 
 app.UseAuthorization();

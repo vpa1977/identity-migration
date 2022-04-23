@@ -16,7 +16,7 @@ namespace Sample.Hydra
         {
             return new Dictionary<string, string>
             {
-                ["authority"] = $"https://{context.Request.Host.Value}",
+                ["authority"] = $"{_config.PublicUrl}",
                 ["client_id"] = _config.ClientID,
                 ["redirect_uri"] = $"https://{context.Request.Host.Value}/authentication/login-callback",
                 ["post_logout_redirect_uri"] = $"https://{context.Request.Host.Value}/authentication/logout-callback",

@@ -21,13 +21,19 @@ namespace Sample.Hydra
                 Scope = _config.Scope, 
                 TokenEndpointAuthMethod = "none", 
                 GrantTypes = new() { "authorization_code"}, 
-                ResponseTypes =new() { "code", "id_token"}
+                ResponseTypes =new() { "code", "id_token"}, 
+                RedirectUris = new() { _config.RedirectUri }, 
+                PostLogoutRedirectUris = new() {  _config.PostLogoutRedirectUri}
             });
         }
 
         public void DeleteOpenIdClient()
         {
-            _admin.DeleteOAuth2Client(_config.ClientID);
+            try
+            {
+                _admin.DeleteOAuth2Client(_config.ClientID);
+            }
+            catch { }
         }
     }
 }
