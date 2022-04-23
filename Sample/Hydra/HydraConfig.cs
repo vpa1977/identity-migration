@@ -8,7 +8,7 @@
         public string ClientID { get; set; } = "Sample";
         public string Scope { get; set; } = "SampleAPI openid profile";
         public string RedirectUri { get; set; } = "https://localhost:44416/authentication/login-callback";
-        public string PostLogoutRedirectUri { get; set; } = "https://localhost:44416/";
+        public string PostLogoutRedirectUri { get; set; } = "https://localhost:44416/authentication/logout-callback";
 
     }
 }

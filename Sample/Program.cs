@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -101,6 +102,18 @@ static void BuildIdentity(WebApplicationBuilder builder)
                 ClockSkew = TimeSpan.Zero
             };
         })
+       /* .AddOpenIdConnect( o =>
+        {
+            o.Authority = hc.PublicUrl;
+            o.RequireHttpsMetadata = false; // sample
+            o.ClientId = hc.ClientID;
+            o.ClientSecret = hc.Secret;
+            o.RequireHttpsMetadata = false;
+
+            o.AuthenticationMethod = OpenIdConnectRedirectBehavior.RedirectGet;
+            o.ResponseMode = OpenIdConnectResponseMode.Fragment;
+            o.ResponseType = OpenIdConnectResponseType.Code;
+        })*/
         .AddIdentityCookies();
 
     builder.Services.AddIdentityCore<ApplicationUser>(o =>

@@ -21,6 +21,9 @@ oidc:
     pairwise:
       salt: youReallyNeedToChangeThis
 
+# to retire once we get a better validation
+strategies:
+  access_token: jwt
 
 serve:
   admin:
