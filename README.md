@@ -1,7 +1,3 @@
 # identity-migration
-getting rid of identity server
 
-# Running Hydra 
-
-See https://www.ory.sh/docs/hydra/5min-tutorial
-
+This repo demonstrates how to replace built-in Identity Server with Ory Hydra
