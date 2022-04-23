@@ -1,7 +1,12 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using Sample.Data;
 using Sample.Hydra;
 using Sample.Models;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +25,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-builder.Services.AddAuthentication();
+BuildIdentity(builder);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -67,8 +69,48 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
-app.MapFallbackToFile("index.html");;
+app.MapFallbackToFile("index.html"); ;
 
 app.Run();
+
+static void BuildIdentity(WebApplicationBuilder builder)
+{
+    var hc = new HydraConfig();
+    builder.Configuration.GetSection("Hydra").Bind(hc);
+    builder.Services.AddAuthentication(o =>
+    {
+        o.DefaultScheme = IdentityConstants.ApplicationScheme;
+        o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+        .AddJwtBearer(options =>
+        {
+            options.Authority = hc.PublicUrl;
+            options.RequireHttpsMetadata = false; /// SAMPLE
+            options.Audience = hc.ClientID;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = hc.PublicUrl,
+                ValidAudience = hc.ClientID,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero
+            };
+        })
+        .AddIdentityCookies();
+
+    builder.Services.AddIdentityCore<ApplicationUser>(o =>
+    {
+        o.Stores.MaxLengthForKeys = 128;
+        o.SignIn.RequireConfirmedAccount = true;
+    })
+        .AddRoles<IdentityRole>()
+        .AddUserManager<UserManager<ApplicationUser>>()
+        .AddSignInManager<SignInManager<ApplicationUser>>()
+        .AddDefaultTokenProviders()
+        .AddEntityFrameworkStores<ApplicationDbContext>();
+}

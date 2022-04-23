@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Ory.Hydra.Client.Model;
 
 namespace Sample.Hydra
 {
@@ -34,6 +35,31 @@ namespace Sample.Hydra
                 _admin.DeleteOAuth2Client(_config.ClientID);
             }
             catch { }
+        }
+
+        public string AcceptConsent(string consent_challenge, Dictionary<string, object> additionalData)
+        {
+            var consentRequest = _admin.GetConsentRequest(consent_challenge);
+            var ret = _admin.AcceptConsentRequest(consent_challenge, new()
+            {
+                Remember = true, 
+                Session = new HydraConsentRequestSession()
+                {
+                    AccessToken = additionalData
+                },
+                GrantAccessTokenAudience = consentRequest.RequestedAccessTokenAudience, 
+                GrantScope = consentRequest.RequestedScope,
+            });
+            return ret.RedirectTo;
+        }
+
+        // returns redirect url to continue the flow
+        public string AcceptLoginRequest(string challenge, string subject, Action<HydraAcceptLoginRequest> accept)
+        {
+            var res = new HydraAcceptLoginRequest( subject: subject);
+            accept.Invoke(res);
+            var resp = _admin.AcceptLoginRequest(challenge, res);
+            return resp.RedirectTo;
         }
     }
 }
