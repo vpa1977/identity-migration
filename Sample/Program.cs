@@ -1,3 +1,4 @@
+using IdentityModel.AspNetCore.OAuth2Introspection;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -86,6 +87,7 @@ static void BuildIdentity(WebApplicationBuilder builder)
         o.DefaultScheme = IdentityConstants.ApplicationScheme;
         o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
+        /*
         .AddJwtBearer(options =>
         {
             options.Authority = hc.PublicUrl;
@@ -102,19 +104,16 @@ static void BuildIdentity(WebApplicationBuilder builder)
                 ClockSkew = TimeSpan.Zero
             };
         })
-       /* .AddOpenIdConnect( o =>
-        {
-            o.Authority = hc.PublicUrl;
-            o.RequireHttpsMetadata = false; // sample
-            o.ClientId = hc.ClientID;
-            o.ClientSecret = hc.Secret;
-            o.RequireHttpsMetadata = false;
-
-            o.AuthenticationMethod = OpenIdConnectRedirectBehavior.RedirectGet;
-            o.ResponseMode = OpenIdConnectResponseMode.Fragment;
-            o.ResponseType = OpenIdConnectResponseType.Code;
-        })*/
+     */
         .AddIdentityCookies();
+
+        builder.Services.AddAuthentication(OAuth2IntrospectionDefaults.AuthenticationScheme)
+            .AddOAuth2Introspection(options =>
+            {
+                options.Authority = hc.AdminUrl;
+                options.ClientId = hc.ClientID;
+                options.ClientSecret = hc.Secret;
+            });
 
     builder.Services.AddIdentityCore<ApplicationUser>(o =>
     {

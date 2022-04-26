@@ -72,7 +72,7 @@ namespace Sample.Controllers
                 return View(userModel);
             }
 
-            await _userManager.AddToRoleAsync(user, "Visitor");
+          //  await _userManager.AddToRoleAsync(user, "Visitor");
 
             return View();
         }
@@ -117,12 +117,6 @@ namespace Sample.Controllers
             return View();
         }
 
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-                return Redirect(returnUrl);
-            else
-                return View();
-        }
+   
     }
 }
