@@ -40,6 +40,7 @@ var app = builder.Build();
     var adminClient = scope.ServiceProvider.GetRequiredService<HydraClient>();
     adminClient.DeleteOpenIdClient();
     adminClient.CreateOpenIdClient();
+    var token = adminClient.RetrieveToken();
 }
 
 // Configure the HTTP request pipeline.
